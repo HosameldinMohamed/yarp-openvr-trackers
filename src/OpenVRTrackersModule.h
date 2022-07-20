@@ -19,6 +19,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Port.h>
+#include <yarp/dev/IAnalogSensor.h>
 
 #include <string>
 #include <mutex>
@@ -45,6 +46,8 @@ private:
     openvr::DevicesManager m_manager;
 
     yarp::os::Port m_rpcPort;
+
+    yarp::os::BufferedPort<yarp::os::Bottle> trackerPosePort;
 
     mutable std::mutex m_mutex;
 };

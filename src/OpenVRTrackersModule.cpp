@@ -135,6 +135,14 @@ bool OpenVRTrackersModule::configure(yarp::os::ResourceFinder& rf)
         return false;
     }
 
+    // open tracker pose port
+    bool ok = trackerPosePort.open("/viveTracker/pose");
+    if (!ok)
+    {
+        yError() << openvr_trackers_module::LogPrefix << "Failed to create YARP port out.";
+        return false;
+    }
+
     return true;
 }
 
@@ -202,6 +210,26 @@ bool OpenVRTrackersModule::updateModule()
 
             // Publish the transform
             m_tf->setTransform(tfNamePrefix + sn, m_baseFrame, m_sendBuffer);
+
+            // Publish in a yarp port for the tracker only
+            if(sn.compare("LHR-1D8B66D9") == 0 || sn.compare("LHR-87B324E3") == 0)
+            {
+                yarp::os::Bottle& out = trackerPosePort.prepare();
+                out.clear();
+                out.addFloat64(m_sendBuffer[0][0]);
+                out.addFloat64(m_sendBuffer[0][1]);
+                out.addFloat64(m_sendBuffer[0][2]);
+                out.addFloat64(m_sendBuffer[1][0]);
+                out.addFloat64(m_sendBuffer[1][1]);
+                out.addFloat64(m_sendBuffer[1][2]);
+                out.addFloat64(m_sendBuffer[2][0]);
+                out.addFloat64(m_sendBuffer[2][1]);
+                out.addFloat64(m_sendBuffer[2][2]);
+                out.addFloat64(m_sendBuffer[0][3]);
+                out.addFloat64(m_sendBuffer[1][3]);
+                out.addFloat64(m_sendBuffer[2][3]);
+                trackerPosePort.write();
+            }
         }
     }
 
@@ -214,6 +242,7 @@ bool OpenVRTrackersModule::close()
 
     m_driver.close();
     m_rpcPort.close();
+    trackerPosePort.close();
     return true;
 }
 
