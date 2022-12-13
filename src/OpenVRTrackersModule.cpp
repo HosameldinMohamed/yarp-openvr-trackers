@@ -212,7 +212,7 @@ bool OpenVRTrackersModule::updateModule()
             m_tf->setTransform(tfNamePrefix + sn, m_baseFrame, m_sendBuffer);
 
             // Publish in a yarp port for the tracker only
-            if(sn.compare("LHR-1D8B66D9") == 0 || sn.compare("LHR-87B324E3") == 0)
+            if(sn.compare("LHR-1D8B66D9") == 0 || sn.compare("LHR-87B324E3") == 0 || sn.compare("LHR-D5A4F2D8") == 0)
             {
                 yarp::os::Bottle& out = trackerPosePort.prepare();
                 out.clear();
